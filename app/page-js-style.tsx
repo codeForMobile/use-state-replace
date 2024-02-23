@@ -1,5 +1,7 @@
+'use client'
 import Image from 'next/image'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const imageUrls = {
   black: '/t-shirt-black.jpg',
@@ -8,21 +10,35 @@ const imageUrls = {
 const colorVariants = ['black', 'spiral']
 const sizeVariants = ['xtraSmall', 'small']
 
-export default function Home({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | string[] | undefined
-  }
-}) {
-  const selectedColor = searchParams.color as string
-  const selectedSize = searchParams.size as string
+export default function Home() {
+  /*   const selectedColor = 'black'
+  const selectedSize = 'xtraSmall' */
+
+  const router = useRouter()
+  const [selectedColor, setSelectedColor] = useState('black')
+  const [selectedSize, setSelectedSize] = useState('small')
+
+  useEffect(() => {
+    // Approach-1 to use native JS lib
+    /*     window.history.pushState(
+      null,
+      '',
+      `?color=${selectedColor}&size=${selectedSize}`
+    ) */
+
+    // Approach-2 to partially use nextJS router.
+    // We are still not reading from url here but just setting it.
+    router.push(`?color=${selectedColor}&size=${selectedSize}`, {
+      scroll: false,
+    })
+  }, [selectedColor, selectedSize, router])
 
   return (
     <main className="flex min-h-screen bg-grey-200 items-center justify-center">
       <div className="bg-white flex items-center w-[96%] rounded min-h-[75vh]">
         <div className="flxe-[2] flex justify-center">
           <Image
+            priority
             // @ts-ignore
             src={imageUrls[selectedColor]}
             alt="Black"
@@ -45,20 +61,17 @@ export default function Home({
               </h2>
               <div className="flex gap-2">
                 {colorVariants.map((color, index) => (
-                  <Link
+                  <button
                     key={index}
-                    href={`?${new URLSearchParams({
-                      color,
-                      size: selectedSize,
-                    })}`}
                     className={`bg-grey-100 bg-pink-500 px-4 py-1 rounded-full border-2 ${
                       selectedColor === color
                         ? 'border-blue-500'
                         : 'border-grey-500'
                     }`}
+                    onClick={() => setSelectedColor(color)}
                   >
                     {color}
-                  </Link>
+                  </button>
                 ))}
               </div>
             </section>
@@ -69,20 +82,17 @@ export default function Home({
               </h2>
               <div className="flex gap-2">
                 {sizeVariants.map((size, index) => (
-                  <Link
+                  <button
                     key={index}
-                    href={`?${new URLSearchParams({
-                      color: selectedColor,
-                      size,
-                    })}`}
                     className={`bg-grey-100 bg-green-500 px-4 py-1 rounded-full border-2 ${
                       selectedSize === size
                         ? 'border-blue-500'
                         : 'border-grey-500'
                     }`}
+                    onClick={() => setSelectedSize(size)}
                   >
                     {size}
-                  </Link>
+                  </button>
                 ))}
               </div>
             </section>

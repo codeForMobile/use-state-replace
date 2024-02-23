@@ -1,5 +1,7 @@
+'use client'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 const imageUrls = {
   black: '/t-shirt-black.jpg',
@@ -8,15 +10,10 @@ const imageUrls = {
 const colorVariants = ['black', 'spiral']
 const sizeVariants = ['xtraSmall', 'small']
 
-export default function Home({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | string[] | undefined
-  }
-}) {
-  const selectedColor = searchParams.color as string
-  const selectedSize = searchParams.size as string
+export default function Home() {
+  const searchParams = useSearchParams()
+  const selectedColor = searchParams.get('color')
+  const selectedSize = searchParams.get('size')
 
   return (
     <main className="flex min-h-screen bg-grey-200 items-center justify-center">
@@ -47,10 +44,7 @@ export default function Home({
                 {colorVariants.map((color, index) => (
                   <Link
                     key={index}
-                    href={`?${new URLSearchParams({
-                      color,
-                      size: selectedSize,
-                    })}`}
+                    href={`?color=${color}&size=${selectedSize}`}
                     className={`bg-grey-100 bg-pink-500 px-4 py-1 rounded-full border-2 ${
                       selectedColor === color
                         ? 'border-blue-500'
@@ -71,10 +65,7 @@ export default function Home({
                 {sizeVariants.map((size, index) => (
                   <Link
                     key={index}
-                    href={`?${new URLSearchParams({
-                      color: selectedColor,
-                      size,
-                    })}`}
+                    href={`?color=${selectedColor}&size=${size}`}
                     className={`bg-grey-100 bg-green-500 px-4 py-1 rounded-full border-2 ${
                       selectedSize === size
                         ? 'border-blue-500'
